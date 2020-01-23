@@ -16,22 +16,22 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="210"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Fat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Waw-pQ-O84">
-                        <rect key="frame" x="20" y="20" width="24" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Carbohydrate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Waw-pQ-O84">
+                        <rect key="frame" x="20" y="20" width="105" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Protein" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oi9-w3-5rD">
-                        <rect key="frame" x="20" y="67" width="55" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Fat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oi9-w3-5rD">
+                        <rect key="frame" x="20" y="67" width="24" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Carbohydrate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DnQ-IE-6Lf">
-                        <rect key="frame" x="20" y="112" width="105" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Protein" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DnQ-IE-6Lf">
+                        <rect key="frame" x="20" y="112" width="55" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
@@ -82,12 +82,12 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="carboLabel" destination="AmH-qP-69b" id="BHa-EQ-97m"/>
-                <outlet property="fatLabel" destination="ALO-MV-4jV" id="Ira-Ly-caB"/>
-                <outlet property="proteinLabel" destination="DC7-tL-ykW" id="MvI-ze-ajX"/>
-                <outlet property="pvKarbo" destination="AEE-wT-yIS" id="t5n-DJ-83H"/>
-                <outlet property="pvLemak" destination="UVQ-On-Jxl" id="PIn-di-fgL"/>
-                <outlet property="pvProtein" destination="b12-2e-FLj" id="Oew-2w-Qwm"/>
+                <outlet property="carboLabel" destination="ALO-MV-4jV" id="Pzu-fo-bPD"/>
+                <outlet property="fatLabel" destination="DC7-tL-ykW" id="7JZ-Kj-rvK"/>
+                <outlet property="proteinLabel" destination="AmH-qP-69b" id="bcL-ae-80q"/>
+                <outlet property="pvKarbo" destination="UVQ-On-Jxl" id="0Hj-as-hjP"/>
+                <outlet property="pvLemak" destination="b12-2e-FLj" id="YPW-Ki-o0X"/>
+                <outlet property="pvProtein" destination="AEE-wT-yIS" id="Avj-q0-eNK"/>
             </connections>
             <point key="canvasLocation" x="205.79710144927537" y="200.22321428571428"/>
         </tableViewCell>

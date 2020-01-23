@@ -14,15 +14,14 @@ protocol DetailAction {
 
 class giziTableViewCell: UITableViewCell {
     
-    
-    @IBOutlet weak var pvLemak: UIProgressView!
-    
-    @IBOutlet weak var pvProtein: UIProgressView!
     @IBOutlet weak var pvKarbo: UIProgressView!
-    
+    @IBOutlet weak var pvLemak: UIProgressView!
+    @IBOutlet weak var pvProtein: UIProgressView!
+    @IBOutlet weak var carboLabel: UILabel!
     @IBOutlet weak var fatLabel: UILabel!
     @IBOutlet weak var proteinLabel: UILabel!
-    @IBOutlet weak var carboLabel: UILabel!
+    
+    
     
     
     var delegate: DetailAction?

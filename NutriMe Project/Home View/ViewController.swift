@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     var appDelegate = UIApplication.shared.delegate as? AppDelegate
     let healthKitStore = HKHealthStore()
     
-    let nutriens:[String]=["Fat","Protein","Carbohydrate"]
+    let nutriens:[String]=["Carbohydrate","Fat","Protein",]
     //
     //    var totalCalories : Double = 0
     //    var totalCarbohidrates : Double = 0
@@ -114,6 +114,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(true)
         checkUserInfo {}
         guard let userID = UserDefaults.standard.value(forKey: "currentUserID") as? String else {return}
+        self.buttonProfile.isEnabled = false
         db.fetchDataUser(userID: userID, completion: { (userInfo) in
             DispatchQueue.main.async {
                 self.userInfo = userInfo
@@ -175,6 +176,7 @@ class ViewController: UIViewController {
                         
                         
                         self.dashboardTableView.reloadData()
+                        self.buttonProfile.isEnabled = true
                         self.currentCaloriesLabel.text = "\(Int(self.db.totalCalories)) cal"
                         if !UserDefaults.standard.bool(forKey: "isReportCreated"){
                             self.db.createReportRecord()
@@ -327,11 +329,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0{
             if indexPath.row == 0{
-                selectedMacro = "fat"
-            }else if indexPath.row == 1{
-                selectedMacro = "protein"
-            }else if indexPath.row == 2{
                 selectedMacro = "carb"
+            }else if indexPath.row == 1{
+                selectedMacro = "fat"
+            }else if indexPath.row == 2{
+                selectedMacro = "protein"
             }
             performSegue(withIdentifier: "toRecomendation", sender: self)
         }
@@ -381,29 +383,30 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             cell?.lblNamaMakro.text = nutriens[indexPath.row]
             
             if indexPath.row == 0 {
-                if UserDefaults.standard.value(forKey: "fatRecommendation") != nil {
-                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "fatRecommendation") as! String
+                if UserDefaults.standard.value(forKey: "carbRecommendation") != nil {
+                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "carbRecommendation") as? String
                 }
                 else{
                     cell?.lblNamaMakanan.text = "Click to Choose"
                 }
             }
             else if indexPath.row == 1 {
-                if UserDefaults.standard.value(forKey: "proteinRecommendation") != nil {
-                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "proteinRecommendation") as! String
+                if UserDefaults.standard.value(forKey: "fatRecommendation") != nil {
+                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "fatRecommendation") as? String
                 }
                 else{
                     cell?.lblNamaMakanan.text = "Click to Choose"
                 }
             }
             else if indexPath.row == 2 {
-                if UserDefaults.standard.value(forKey: "carbRecommendation") != nil {
-                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "carbRecommendation") as! String
+                if UserDefaults.standard.value(forKey: "proteinRecommendation") != nil {
+                    cell?.lblNamaMakanan.text = UserDefaults.standard.value(forKey: "proteinRecommendation") as? String
                 }
                 else{
                     cell?.lblNamaMakanan.text = "Click to Choose"
                 }
             }
+            cell?.selectionStyle = .none
             return cell!
         }else if indexPath.section == 1{
             let cell = tableView.dequeueReusableCell(withIdentifier: "cellMakro", for: indexPath) as? giziTableViewCell
@@ -412,9 +415,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             let progressProtein: Float = Float(self.db.totalProtein) / (self.userInfo?.proteinGoal ?? 0)
             let progressLemak: Float = Float(self.db.totalFat) / (self.userInfo?.fatGoal ?? 0)
             
-            //            print(progressKarbo)
-            //            print(progressProtein)
-            //            print(progressLemak)
+            cell?.pvKarbo.tintColor = UIColor.systemRed
+            cell?.pvProtein.tintColor = UIColor.systemBlue
+            cell?.pvLemak.tintColor = UIColor.systemYellow
             
             cell?.pvKarbo.setProgress(progressKarbo, animated: true)
             cell?.pvProtein.setProgress(progressProtein, animated: true)
@@ -425,9 +428,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             cell?.carboLabel.text = "\((10 * self.db.totalCarbohidrates).rounded() / 10) / \((10 * (self.userInfo?.carbohydrateGoal ?? 0) ).rounded() / 10)"
             
             cell?.delegate = self
+            cell?.selectionStyle = .none
             return cell!
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellMineral", for: indexPath) as? mineralTableViewCell
+        cell?.selectionStyle = .none
         return cell!
     }
 }
@@ -451,9 +456,6 @@ extension ViewController : UpdateData{
         }
     }
     
-    func updateRecommendation() {
-        
-    }
 }
 
 extension ViewController : DetailAction{
