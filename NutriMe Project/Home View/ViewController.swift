@@ -24,7 +24,8 @@ class ViewController: UIViewController {
     var appDelegate = UIApplication.shared.delegate as? AppDelegate
     let healthKitStore = HKHealthStore()
     
-    let nutriens:[String]=["Carbohydrate","Fat","Protein",]
+    //let nutriens:[(String,String)]=[("Karbohidrat","Jagung"),("Protein","Telur"),("Lemak","Daging")]
+    let nutriens:[String]=["Fat","Protein","Carbohydrate"]
     //
     //    var totalCalories : Double = 0
     //    var totalCarbohidrates : Double = 0
@@ -92,6 +93,10 @@ class ViewController: UIViewController {
 //        self.btnActivityLevel.titleLabel?.text = "Activity Level (\(selectedActivities?.level.rawValue))"
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toActivityPage"{
             let nextVC = segue.destination as! ActivityViewController
@@ -119,78 +124,131 @@ class ViewController: UIViewController {
             DispatchQueue.main.async {
                 self.userInfo = userInfo
                 self.db.userInfo = userInfo
+                //self.caloriesGoalLabel.text = "\(Int(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2))) calories"
                 self.caloriesGoalLabel.text = "\(10 * Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)).rounded() / 10) calories"
-                
-                if UserDefaults.standard.value(forKey: "userActivityLevel") != nil {
-                    self.defaultActivityLevel = UserDefaults.standard.value(forKey: "userActivityLevel") as! Int
-                }
-                
-                if self.defaultActivityLevel != 3 {
-                    self.activityCaloriesLabel.text = "\(10 * Double((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!).rounded() / 10) cal"
-                    
-                    if self.defaultActivityLevel == 0 {
-                        self.btnActivityLevel.titleLabel?.text = "Activity Level-Low"
-                    }
-                    else if self.defaultActivityLevel == 1{
-                        self.btnActivityLevel.titleLabel?.text = "Activity Level-Med"
-                        
-                    }
-                    else if self.defaultActivityLevel == 2{
-                        self.btnActivityLevel.titleLabel?.text = "Activity Level-High"
-                    }
-                }
-                else{
-                    self.getTodaysSteps { (step) in
-                        self.totalStepCount = step
-                        self.getTodaysActiveEnergy { (energy) in
-                            self.totalActiveEnergy = energy
-                            let totalEnergy = (self.totalStepCount * 0.04) + self.totalActiveEnergy
-                            DispatchQueue.main.async {
-                                self.activityCaloriesLabel.text = "\(10 * Double(totalEnergy).rounded() / 10)"
-                                self.btnActivityLevel.titleLabel?.text = "Activity Level-Live"
-                            }
-                        }
-                    }
-                     
-                }
-                
+                self.activityCaloriesLabel.text = "\(Int((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!)) cal"
                 self.dashboardTableView.reloadData()
                 
                 //self.getUserData()
-                self.db.getUserData {
-                    DispatchQueue.main.async {
-                        var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
-                        
-                        if caloriesNeeded < 0 {
-                            self.caloriesTitleLabel.text = "Over"
-                            self.caloriesNeededLabel.textColor = .systemRed
-                            caloriesNeeded = caloriesNeeded * -1
+                self.db.getUserData(completion: { (_, err) in
+                    
+                    if err != nil{
+                        if !CheckInternet.Connection(){
+                            let alert = UIAlertController(title: "Internet Connection", message: "Internet connection required please check your internet connection!", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
                         }
-                        else{
-                            self.caloriesTitleLabel.text = "Remaining"
-                            self.caloriesNeededLabel.textColor = .label
+                    }else{
+                        DispatchQueue.main.async {
+                            var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
+                            
+                            if caloriesNeeded < 0 {
+                                self.caloriesTitleLabel.text = "Over"
+                                self.caloriesNeededLabel.textColor = .systemRed
+                                caloriesNeeded = caloriesNeeded * -1
+                            }
+                            else{
+                                self.caloriesTitleLabel.text = "Remaining"
+                                self.caloriesNeededLabel.textColor = .label
+                            }
+                            
+                            self.currentCaloriesLabel.text = "\((10 * self.totalCalories).rounded() / 10)"
+                            self.caloriesNeededLabel.text = "\(caloriesNeeded)"
+
+
+                            self.dashboardTableView.reloadData()
+                            self.currentCaloriesLabel.text = "\(Int(self.db.totalCalories)) cal"
+                            if !UserDefaults.standard.bool(forKey: "isReportCreated"){
+                                self.db.createReportRecord()
+                            }else{
+                                if UserDefaults.standard.bool(forKey: "needUpdate"){
+                                    self.db.updateReport()
+                                    UserDefaults.standard.set(false, forKey: "needUpdate")
+                                }
+                            }
+                            if UserDefaults.standard.value(forKey: "userActivityLevel") != nil {
+                                self.defaultActivityLevel = UserDefaults.standard.value(forKey: "userActivityLevel") as! Int
+                            }
+                            
+                            if self.defaultActivityLevel != 3 {
+                                self.activityCaloriesLabel.text = "\(10 * Double((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!).rounded() / 10) cal"
+//
+//                                if self.defaultActivityLevel == 0 {
+//                                    self.btnActivityLevel.titleLabel?.text = "Activity Level-Low"
+//                                }
+//                                else if self.defaultActivityLevel == 1{
+//                                    self.btnActivityLevel.titleLabel?.text = "Activity Level-Med"
+//
+//                                }
+//                                else if self.defaultActivityLevel == 2{
+//                                    self.btnActivityLevel.titleLabel?.text = "Activity Level-High"
+//                                }
+                            }
+                            else{
+                                self.getTodaysSteps { (step) in
+                                    self.totalStepCount = step
+                                    self.getTodaysActiveEnergy { (energy) in
+                                        self.totalActiveEnergy = energy
+                                        let totalEnergy = (self.totalStepCount * 0.04) + self.totalActiveEnergy
+                                        DispatchQueue.main.async {
+                                            self.activityCaloriesLabel.text = "\(10 * Double(totalEnergy).rounded() / 10)"
+                                            self.btnActivityLevel.titleLabel?.text = "Activity Level-Live"
+                                        }
+                                    }
+                                }   
+                            }
+
                         }
-                        
-                        self.currentCaloriesLabel.text = "\((10 * self.totalCalories).rounded() / 10)"
-                        self.caloriesNeededLabel.text = "\(caloriesNeeded)"
-                        
-                        
-                        self.dashboardTableView.reloadData()
-                        self.buttonProfile.isEnabled = true
-                        self.currentCaloriesLabel.text = "\(Int(self.db.totalCalories)) cal"
-                        if !UserDefaults.standard.bool(forKey: "isReportCreated"){
-                            self.db.createReportRecord()
-                        }else{
-                            if UserDefaults.standard.bool(forKey: "needUpdate"){
-                                self.db.updateReport()
-                                UserDefaults.standard.set(false, forKey: "needUpdate")
+                        DispatchQueue.main.async{
+                            self.dashboardTableView.reloadData()
+                        }
+                        //self.getUserData()
+                        self.db.getUserData {_,_ in
+                            DispatchQueue.main.async {
+                                var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
+                                
+                                if caloriesNeeded < 0 {
+                                    self.caloriesTitleLabel.text = "Over"
+                                    self.caloriesNeededLabel.textColor = .systemRed
+                                    caloriesNeeded = caloriesNeeded * -1
+                                }
+
+                                self.getTodaysActiveEnergy { (energy) in
+                                    self.totalActiveEnergy = energy
+                                }
                             }
                         }
                     }
-                    
-                }
+                })
             }
         })
+            
+
+
+                
+
+                        
+                        //  else{
+                        //     self.caloriesTitleLabel.text = "Remaining"
+                        //     self.caloriesNeededLabel.textColor = .label
+                        // }
+                        
+                        // self.currentCaloriesLabel.text = "\((10 * self.totalCalories).rounded() / 10)"
+                        // self.caloriesNeededLabel.text = "\(caloriesNeeded)"
+                        
+                        
+                        // self.dashboardTableView.reloadData()
+                        // self.currentCaloriesLabel.text = "\(Int(self.db.totalCalories)) cal"
+                        // if !UserDefaults.standard.bool(forKey: "isReportCreated"){
+                        //     self.db.createReportRecord()
+                        // }else{
+                        //     if UserDefaults.standard.bool(forKey: "needUpdate"){
+                        //         self.db.updateReport()
+                        //         UserDefaults.standard.set(false, forKey: "needUpdate")
+                        //     }
+                        // }
+
+
         
         
         
@@ -299,7 +357,6 @@ class ViewController: UIViewController {
     
     func checkUserInfo(completionHandler: @escaping()-> Void){
         if !UserDefaults.standard.bool(forKey: "userInfoExist"){
-            
             
             let registerVB : UINavigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "loginVc") as! UINavigationController
             let registerVC = registerVB.viewControllers[0] as! LoginViewController
@@ -447,7 +504,8 @@ extension ViewController : UpdateData{
         DispatchQueue.main.async {
             if activity.id == 1{
                 self.btnActivityLevel.titleLabel?.text = "Activity Level-Med"
-                
+            }else if activity.id == 3{
+                self.btnActivityLevel.titleLabel?.text = "Activity Level-Live"
             }else{
                 self.btnActivityLevel.titleLabel?.numberOfLines = 0
                 //self.btnActivityLevel.titleLabel?.adjustsFontSizeToFitWidth = true
