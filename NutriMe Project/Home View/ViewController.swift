@@ -118,6 +118,8 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         checkUserInfo {}
+        self.buttonProfile.isEnabled = false
+
         guard let userID = UserDefaults.standard.value(forKey: "currentUserID") as? String else {return}
         self.buttonProfile.isEnabled = false
         db.fetchDataUser(userID: userID, completion: { (userInfo) in
@@ -128,17 +130,18 @@ class ViewController: UIViewController {
                 self.caloriesGoalLabel.text = "\(10 * Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)).rounded() / 10) calories"
                 self.activityCaloriesLabel.text = "\(Int((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!)) cal"
                 self.dashboardTableView.reloadData()
-                
+                self.buttonProfile.isEnabled = true
+
                 //self.getUserData()
-                self.db.getUserData(completion: { (_, err) in
-                    
-                    if err != nil{
-                        if !CheckInternet.Connection(){
-                            let alert = UIAlertController(title: "Internet Connection", message: "Internet connection required please check your internet connection!", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                            self.present(alert, animated: true, completion: nil)
-                        }
-                    }else{
+                self.db.getUserData(completion: {
+//
+//                    if err != nil{
+//                        if !CheckInternet.Connection(){
+//                            let alert = UIAlertController(title: "Internet Connection", message: "Internet connection required please check your internet connection!", preferredStyle: .alert)
+//                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//                            self.present(alert, animated: true, completion: nil)
+//                        }
+//                    }else{
                         DispatchQueue.main.async {
                             
                             var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
@@ -153,12 +156,12 @@ class ViewController: UIViewController {
                                 self.caloriesNeededLabel.textColor = .label
                             }
                             
-                            self.currentCaloriesLabel.text = "\((10 * self.totalCalories).rounded() / 10)"
+                            //self.currentCaloriesLabel.text = "\((10 * self.totalCalories).rounded() / 10)"
                             self.caloriesNeededLabel.text = "\(caloriesNeeded)"
-
 
                             self.dashboardTableView.reloadData()
                             self.currentCaloriesLabel.text = "\(Int(self.db.totalCalories)) cal"
+                            print(self.db.totalCalories)
                             if !UserDefaults.standard.bool(forKey: "isReportCreated"){
                                 self.db.createReportRecord()
                             }else{
@@ -173,7 +176,7 @@ class ViewController: UIViewController {
                             if UserDefaults.standard.value(forKey: "userActivityLevel") != nil {
                                 self.defaultActivityLevel = UserDefaults.standard.value(forKey: "userActivityLevel") as! Int
                             }
-                            
+
                             if self.defaultActivityLevel != 3 {
                                 DispatchQueue.main.async{
                                     self.activityCaloriesLabel.text = "\(10 * Double((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!).rounded() / 10) cal"
@@ -201,30 +204,8 @@ class ViewController: UIViewController {
                                             self.btnActivityLevel.titleLabel?.text = "Activity Level-Live"
                                         }
                                     }
-                                }   
-                            }
-
-                    
-//                        DispatchQueue.main.async{
-//                            self.dashboardTableView.reloadData()
-//                        }
-                        //self.getUserData()
-                        self.db.getUserData {_,_ in
-                            DispatchQueue.main.async {
-                                var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
-                                
-                                if caloriesNeeded < 0 {
-                                    self.caloriesTitleLabel.text = "Over"
-                                    self.caloriesNeededLabel.textColor = .systemRed
-                                    caloriesNeeded = caloriesNeeded * -1
-                                }
-
-                                self.getTodaysActiveEnergy { (energy) in
-                                    self.totalActiveEnergy = energy
                                 }
                             }
-                        }
-                    }
                 })
             }
         })
@@ -349,7 +330,7 @@ class ViewController: UIViewController {
         //                self.activityCaloriesLabel.text = "\((10 * (self.totalCaloriesGoal - Double(self.userInfo!.caloriesGoal!))).rounded() / 10) Cal"
         //                //                self.caloriesGoalLabel.text = "\(Int(self.userInfo!.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2))) calories"
         //                //                self.activityCaloriesLabel.text = "\(Int((self.userInfo!.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.userInfo!.caloriesGoal!)) cal"
-        //                self.buttonProfile.isEnabled = true
+                 
         //                //self.getUserData()
         //            }
         //        }
