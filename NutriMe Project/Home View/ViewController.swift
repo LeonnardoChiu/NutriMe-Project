@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     let healthKitStore = HKHealthStore()
     
     //let nutriens:[(String,String)]=[("Karbohidrat","Jagung"),("Protein","Telur"),("Lemak","Daging")]
-    let nutriens:[String]=["Fat","Protein","Carbohydrate"]
+    let nutriens:[String]=["Carbohydrate","Fat","Protein"]
     //
     //    var totalCalories : Double = 0
     //    var totalCarbohidrates : Double = 0
@@ -140,6 +140,7 @@ class ViewController: UIViewController {
                         }
                     }else{
                         DispatchQueue.main.async {
+                            
                             var caloriesNeeded = (10 * (Double(userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - self.db.totalCalories)).rounded() / 10
                             
                             if caloriesNeeded < 0 {
@@ -166,12 +167,17 @@ class ViewController: UIViewController {
                                     UserDefaults.standard.set(false, forKey: "needUpdate")
                                 }
                             }
+                            
+                        }
+                        
                             if UserDefaults.standard.value(forKey: "userActivityLevel") != nil {
                                 self.defaultActivityLevel = UserDefaults.standard.value(forKey: "userActivityLevel") as! Int
                             }
                             
                             if self.defaultActivityLevel != 3 {
-                                self.activityCaloriesLabel.text = "\(10 * Double((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!).rounded() / 10) cal"
+                                DispatchQueue.main.async{
+                                    self.activityCaloriesLabel.text = "\(10 * Double((userInfo.caloriesGoal! * (self.selectedActivities?.caloriesMultiply ?? 1.2)) - userInfo.caloriesGoal!).rounded() / 10) cal"
+                                }
 //
 //                                if self.defaultActivityLevel == 0 {
 //                                    self.btnActivityLevel.titleLabel?.text = "Activity Level-Low"
@@ -198,10 +204,10 @@ class ViewController: UIViewController {
                                 }   
                             }
 
-                        }
-                        DispatchQueue.main.async{
-                            self.dashboardTableView.reloadData()
-                        }
+                    
+//                        DispatchQueue.main.async{
+//                            self.dashboardTableView.reloadData()
+//                        }
                         //self.getUserData()
                         self.db.getUserData {_,_ in
                             DispatchQueue.main.async {
@@ -399,9 +405,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Rekomendasi Makanan"
+            return "Food Recommendation"
         case 1:
-            return "Nutrisi Makro"
+            return "Macronutriens"
         case 2:
             return "Mineral"
         default:
