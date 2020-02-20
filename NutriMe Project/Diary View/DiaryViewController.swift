@@ -10,8 +10,6 @@ import UIKit
 import CloudKit
 
 
-
-
 class DiaryViewController: UIViewController {
     
     @IBOutlet weak var monthLabel: UILabel!
@@ -112,8 +110,10 @@ class DiaryViewController: UIViewController {
                 leapYearCounter = 1
                 daysInMonth[1] = 28
             }
+            selectedMonthNumber = calendarMonth
         default:
             calendarMonth += 1
+            selectedMonthNumber = calendarMonth
         }
     }
     
@@ -134,8 +134,10 @@ class DiaryViewController: UIViewController {
             else{
                 daysInMonth[1] = 29
             }
+            selectedMonthNumber = calendarMonth
         default:
             calendarMonth -= 1
+            selectedMonthNumber = calendarMonth
         }
     }
     
@@ -546,47 +548,10 @@ extension DiaryViewController: SaveData{
     
     func dismissPage(dismiss: Bool) {
         if dismiss{
-            self.diaryTable.reloadData()
+            self.queryUserFood()
             print("WORKKRKRKRK")
         }
     }
     
     
 }
-
-//extension DiaryViewController: SaveData{
-//    func dismissPage(dismiss: Bool) {
-//
-//    }
-//
-//    func saveData(food: Food, eatCategory: EatCategory, portion: Float, date: Date) {
-//        let newFoodInDiary = FoodInDiary(category: eatCategory, food: food, date: date, portion: portion)
-//        for (idx,diary) in dataDiary.enumerated(){
-//            if diary.category == newFoodInDiary.category{
-//                dataDiary[idx].foods.append(newFoodInDiary)
-//                self.diaryTable.reloadData()
-//                return
-//            }
-//        }
-
-//        let record = CKRecord(recordType: "Diary")
-//
-//        record.setValue("CURRENT USER ID", forKey: "userID")
-//        record.setValue("CURRENT USER ACTIVITY", forKey: "activityID")
-//        record.setValue(food, forKey: "foodID")
-//        record.setValue(eatCategory, forKey: "category")
-//        record.setValue(date, forKey: "date")
-//        record.setValue(portion, forKey: "portion")
-//
-//        database.save(record) { (record, error) in
-//
-//            if error == nil {
-//                print("Record Saved. ID = \(record!.recordID.recordName)")
-//
-//            }
-//            else{
-//                print("Record Not Saved")
-//            }
-//        }
-//    }
-//}
